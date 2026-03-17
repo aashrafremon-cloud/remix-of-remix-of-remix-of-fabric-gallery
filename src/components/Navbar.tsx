@@ -45,7 +45,7 @@ const Navbar = () => {
 
           {/* Logo center */}
           <Link to="/" className="flex items-center">
-            <img src={logo} alt="ADAM Fabrics" className="w-12 h-12 md:w-14 md:h-14 rounded-full" />
+            <img src={logo} alt="ADAM Fabrics" className="w-12 h-12 md:w-14 md:h-14" />
           </Link>
 
           {/* Search icon */}

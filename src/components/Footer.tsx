@@ -7,7 +7,7 @@ const Footer = () => {
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center md:text-right">
           <div className="flex flex-col items-center md:items-start gap-4">
-            <img src={logo} alt="ADAM Fabrics" className="w-16 h-16 rounded-full" />
+            <img src={logo} alt="ADAM Fabrics" className="w-16 h-16" />
             <p className="text-sm opacity-70 font-body max-w-xs">
               آدم للأقمشة - وجهتك الأولى لأرقى الأقمشة المحلية والمستوردة
             </p>
