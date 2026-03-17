@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import logo from "@/assets/logo.jpg";
+import logo from "@/assets/adam-logo.svg";
 
 interface IntroLoaderProps {
   onComplete: () => void;
@@ -45,7 +45,7 @@ const IntroLoader = ({ onComplete }: IntroLoaderProps) => {
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.5, duration: 1 }}
           >
-            <img src={logo} alt="ADAM Fabrics" className="w-40 h-40 rounded-full shadow-fabric opacity-80" />
+            <img src={logo} alt="ADAM Fabrics" className="w-40 h-40 shadow-fabric opacity-80" />
           </motion.div>
         </div>
       </motion.div>

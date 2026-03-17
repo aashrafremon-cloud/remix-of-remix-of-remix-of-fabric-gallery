@@ -2,13 +2,14 @@ import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X, Search } from "lucide-react";
-import logo from "@/assets/logo.jpg";
+import logo from "@/assets/adam-logo.svg";
 
 const navItems = [
   { label: "الرئيسية", path: "/" },
   { label: "المعرض", path: "/gallery" },
   { label: "أقمشة محلية", path: "/gallery?category=local" },
   { label: "أقمشة مستوردة", path: "/gallery?category=imported" },
+  { label: "تسجيل بياناتك", path: "/register" },
   { label: "تواصل معنا", path: "/contact" },
 ];
 
@@ -45,7 +46,7 @@ const Navbar = () => {
 
           {/* Logo center */}
           <Link to="/" className="flex items-center">
-            <img src={logo} alt="ADAM Fabrics" className="w-12 h-12 md:w-14 md:h-14 rounded-full" />
+            <img src={logo} alt="ADAM Fabrics" className="w-12 h-12 md:w-14 md:h-14" />
           </Link>
 
           {/* Search icon */}

@@ -2,7 +2,7 @@ import { useState, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import heroBanner from "@/assets/hero-banner.jpg";
-import logo from "@/assets/logo.jpg";
+import logo from "@/assets/adam-logo.svg";
 import mascotThinking from "@/assets/mascot-thinking.png";
 import mascotFabric from "@/assets/mascot-fabric.png";
 import { fabrics } from "@/data/fabrics";
@@ -41,7 +41,7 @@ const Index = () => {
         <img src={heroBanner} alt="معرض الأقمشة" className="absolute inset-0 w-full h-full object-cover" />
         <div className="absolute inset-0 bg-foreground/40" />
         {/* Watermark logo */}
-        <img src={logo} alt="" className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 opacity-10 rounded-full" />
+        <img src={logo} alt="" className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 opacity-10" />
         <div className="relative z-10 h-full flex flex-col items-center justify-center text-center px-4">
           <motion.h1
             className="font-display text-4xl md:text-6xl text-primary-foreground mb-4"
