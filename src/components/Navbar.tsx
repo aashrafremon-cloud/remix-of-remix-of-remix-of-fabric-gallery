@@ -6,6 +6,7 @@ import logo from "@/assets/adam-logo.svg";
 
 const navItems = [
   { label: "الرئيسية", path: "/" },
+  { label: "عن آدم", path: "/about" },
   { label: "المعرض", path: "/gallery" },
   { label: "أقمشة محلية", path: "/gallery?category=local" },
   { label: "أقمشة مستوردة", path: "/gallery?category=imported" },
@@ -13,30 +14,27 @@ const navItems = [
   { label: "تواصل معنا", path: "/contact" },
 ];
 
+const isActivePath = (pathname: string, path: string) => pathname === path;
+
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
 
   return (
-    <nav className="sticky top-0 z-40 bg-background/90 backdrop-blur-md border-b border-border">
+    <nav className="sticky top-0 z-40 border-b border-border bg-background/90 backdrop-blur-md">
       <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between h-16 md:h-20">
-          {/* Mobile menu button */}
-          <button
-            onClick={() => setIsOpen(!isOpen)}
-            className="md:hidden p-2 text-foreground"
-          >
+        <div className="flex h-16 items-center justify-between md:h-20">
+          <button onClick={() => setIsOpen(!isOpen)} className="p-2 text-foreground md:hidden" aria-label="القائمة">
             {isOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
 
-          {/* Nav links - desktop */}
-          <div className="hidden md:flex items-center gap-8 font-body text-sm">
+          <div className="hidden items-center gap-8 font-body text-sm md:flex">
             {navItems.map((item) => (
               <Link
                 key={item.path}
                 to={item.path}
                 className={`transition-colors duration-200 hover:text-primary ${
-                  location.pathname === item.path ? "text-primary font-semibold" : "text-muted-foreground"
+                  isActivePath(location.pathname, item.path) ? "text-primary font-semibold" : "text-muted-foreground"
                 }`}
               >
                 {item.label}
@@ -44,35 +42,32 @@ const Navbar = () => {
             ))}
           </div>
 
-          {/* Logo center */}
           <Link to="/" className="flex items-center">
-            <img src={logo} alt="ADAM Fabrics" className="w-12 h-12 md:w-14 md:h-14" />
+            <img src={logo} alt="ADAM Fabrics" className="h-12 w-12 md:h-14 md:w-14" />
           </Link>
 
-          {/* Search icon */}
-          <Link to="/gallery" className="p-2 text-muted-foreground hover:text-primary transition-colors">
+          <Link to="/gallery" className="p-2 text-muted-foreground transition-colors hover:text-primary" aria-label="ابحث في المعرض">
             <Search size={20} />
           </Link>
         </div>
       </div>
 
-      {/* Mobile menu */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
-            className="md:hidden overflow-hidden bg-background border-b border-border"
+            className="overflow-hidden border-b border-border bg-background md:hidden"
           >
-            <div className="container mx-auto px-4 py-4 flex flex-col gap-4">
+            <div className="container mx-auto flex flex-col gap-4 px-4 py-4">
               {navItems.map((item) => (
                 <Link
                   key={item.path}
                   to={item.path}
                   onClick={() => setIsOpen(false)}
-                  className={`text-sm py-2 ${
-                    location.pathname === item.path ? "text-primary font-semibold" : "text-muted-foreground"
+                  className={`py-2 text-sm ${
+                    isActivePath(location.pathname, item.path) ? "text-primary font-semibold" : "text-muted-foreground"
                   }`}
                 >
                   {item.label}
