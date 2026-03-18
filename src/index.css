@@ -103,4 +103,22 @@
   .gradient-teal {
     background: linear-gradient(135deg, hsl(180 100% 25%), hsl(180 80% 35%));
   }
+  .marquee-track {
+    animation: marquee-scroll 22s linear infinite;
+  }
+}
+
+@keyframes marquee-scroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(50%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .marquee-track {
+    animation: none;
+  }
 }
