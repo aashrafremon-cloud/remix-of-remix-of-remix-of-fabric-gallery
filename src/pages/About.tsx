@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import FloatingChat from "@/components/FloatingChat";
+import FloatingSocial from "@/components/FloatingSocial";
 import BrandMarquee from "@/components/BrandMarquee";
 import mascotFabric from "@/assets/mascot-fabric.png";
 
