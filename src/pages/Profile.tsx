@@ -7,7 +7,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { fabrics } from "@/data/fabrics";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import FloatingChat from "@/components/FloatingChat";
+import FloatingSocial from "@/components/FloatingSocial";
 import FabricCard from "@/components/FabricCard";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
