@@ -550,4 +550,115 @@ const MessagesTab = ({ messages, onRefresh }: { messages: any[]; onRefresh: () =
   );
 };
 
+// Admin Chats Tab
+const AdminChatsTab = ({ chatUsers }: { chatUsers: any[] }) => {
+  const [selectedUser, setSelectedUser] = useState<any>(null);
+  const [chatMessages, setChatMessages] = useState<any[]>([]);
+  const [reply, setReply] = useState("");
+  const [sending, setSending] = useState(false);
+
+  const loadChat = async (userId: string) => {
+    const user = chatUsers.find((u: any) => u.id === userId);
+    setSelectedUser(user);
+    const { data } = await supabase
+      .from("chat_messages")
+      .select("*")
+      .eq("user_id", userId)
+      .order("created_at", { ascending: true });
+    setChatMessages(data || []);
+  };
+
+  useEffect(() => {
+    if (!selectedUser) return;
+    const channel = supabase
+      .channel("admin-chat")
+      .on("postgres_changes", { event: "INSERT", schema: "public", table: "chat_messages", filter: `user_id=eq.${selectedUser.id}` }, (payload) => {
+        setChatMessages((prev) => [...prev, payload.new]);
+      })
+      .subscribe();
+    return () => { supabase.removeChannel(channel); };
+  }, [selectedUser]);
+
+  const handleSendReply = async () => {
+    if (!reply.trim() || !selectedUser) return;
+    setSending(true);
+    const { data: { user } } = await supabase.auth.getUser();
+    if (user) {
+      await supabase.from("chat_messages").insert({
+        user_id: selectedUser.id,
+        sender_id: user.id,
+        message: reply.trim(),
+      });
+    }
+    setReply("");
+    setSending(false);
+  };
+
+  if (!selectedUser) {
+    return (
+      <div className="space-y-4">
+        <h2 className="font-display text-xl text-foreground">محادثات المستخدمين</h2>
+        {chatUsers.length === 0 ? (
+          <p className="text-center py-12 text-muted-foreground font-body">لا توجد محادثات بعد</p>
+        ) : (
+          <div className="space-y-2">
+            {chatUsers.map((u: any) => (
+              <button
+                key={u.id}
+                onClick={() => loadChat(u.id)}
+                className="w-full bg-card rounded-xl p-4 shadow-fabric text-right hover:bg-muted/50 transition-colors flex items-center gap-3"
+              >
+                <Users size={20} className="text-primary flex-shrink-0" />
+                <div>
+                  <p className="font-body font-semibold text-foreground">{u.full_name || "مستخدم"}</p>
+                  <p className="font-body text-xs text-muted-foreground">{u.phone || "بدون رقم"}</p>
+                </div>
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center gap-3">
+        <Button variant="ghost" size="sm" onClick={() => setSelectedUser(null)} className="font-body">← رجوع</Button>
+        <h2 className="font-display text-lg text-foreground">محادثة مع {selectedUser.full_name || "مستخدم"}</h2>
+      </div>
+      <div className="bg-card rounded-xl shadow-fabric overflow-hidden flex flex-col" style={{ height: "60vh" }}>
+        <div className="flex-1 overflow-y-auto p-4 space-y-3">
+          {chatMessages.map((msg: any) => {
+            const isAdmin = msg.sender_id !== selectedUser.id;
+            return (
+              <div key={msg.id} className={`flex ${isAdmin ? "justify-end" : "justify-start"}`}>
+                <div className={`max-w-[75%] rounded-xl px-4 py-2.5 ${isAdmin ? "gradient-teal text-primary-foreground" : "bg-muted text-foreground"}`}>
+                  <p className="font-body text-sm">{msg.message}</p>
+                  <span className={`font-body text-[10px] mt-1 block ${isAdmin ? "text-primary-foreground/60" : "text-muted-foreground"}`}>
+                    {new Date(msg.created_at).toLocaleTimeString("ar-EG", { hour: "2-digit", minute: "2-digit" })}
+                  </span>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+        <div className="border-t border-border p-3 flex gap-2">
+          <Input
+            value={reply}
+            onChange={(e) => setReply(e.target.value)}
+            placeholder="اكتب ردك..."
+            className="font-body"
+            onKeyDown={(e) => e.key === "Enter" && !e.shiftKey && handleSendReply()}
+            maxLength={1000}
+          />
+          <Button onClick={handleSendReply} disabled={sending || !reply.trim()} className="gradient-teal text-primary-foreground font-body">
+            إرسال
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 export default AdminDashboard;
