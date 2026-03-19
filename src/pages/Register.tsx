@@ -88,7 +88,7 @@ const Register = () => {
         </motion.div>
       </div>
       <Footer />
-      <FloatingChat />
+      <FloatingSocial />
     </div>
   );
 };
