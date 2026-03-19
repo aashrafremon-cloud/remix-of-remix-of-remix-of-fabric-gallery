@@ -56,6 +56,14 @@ const AdminDashboard = () => {
     setMessages(m.data || []);
     setBrands(b.data || []);
     setFabrics(f.data || []);
+
+    // Fetch unique chat users
+    const { data: chatMsgs } = await supabase.from("chat_messages").select("user_id").order("created_at", { ascending: false });
+    if (chatMsgs) {
+      const uniqueUserIds = [...new Set(chatMsgs.map((cm: any) => cm.user_id))];
+      const { data: profiles } = await supabase.from("profiles").select("*").in("id", uniqueUserIds);
+      setChatUsers(profiles || []);
+    }
     setLoading(false);
   };
 
