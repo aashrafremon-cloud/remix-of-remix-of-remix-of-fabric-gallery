@@ -123,6 +123,7 @@ const AdminDashboard = () => {
             {tab === "customers" && <CustomersTab customers={customers} onRefresh={fetchAll} />}
             {tab === "brands" && <BrandsTab brands={brands} onRefresh={fetchAll} />}
             {tab === "messages" && <MessagesTab messages={messages} onRefresh={fetchAll} />}
+            {tab === "chats" && <AdminChatsTab chatUsers={chatUsers} />}
           </>
         )}
       </div>
