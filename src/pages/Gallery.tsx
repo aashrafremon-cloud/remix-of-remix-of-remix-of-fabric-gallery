@@ -7,7 +7,7 @@ import FabricCard from "@/components/FabricCard";
 import SectionHeader from "@/components/SectionHeader";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import FloatingChat from "@/components/FloatingChat";
+import FloatingSocial from "@/components/FloatingSocial";
 
 const Gallery = () => {
   const [searchParams] = useSearchParams();
