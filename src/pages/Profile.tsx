@@ -239,7 +239,7 @@ const Profile = () => {
         )}
       </div>
       <Footer />
-      <FloatingChat />
+      <FloatingSocial />
     </div>
   );
 };

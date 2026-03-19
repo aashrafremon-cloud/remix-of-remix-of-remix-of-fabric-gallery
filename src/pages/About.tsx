@@ -116,7 +116,7 @@ const About = () => {
       </main>
 
       <Footer />
-      <FloatingChat />
+      <FloatingSocial />
     </div>
   );
 };
