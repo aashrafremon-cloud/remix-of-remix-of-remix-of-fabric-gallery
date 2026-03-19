@@ -12,7 +12,7 @@ import FabricCard from "@/components/FabricCard";
 import SectionHeader from "@/components/SectionHeader";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import FloatingChat from "@/components/FloatingChat";
+import FloatingSocial from "@/components/FloatingSocial";
 import IntroLoader from "@/components/IntroLoader";
 import BrandMarquee from "@/components/BrandMarquee";
 
@@ -142,7 +142,7 @@ const Index = () => {
       </section>
 
       <Footer />
-      <FloatingChat />
+      <FloatingSocial />
     </div>
   );
 };

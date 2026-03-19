@@ -1,17 +1,50 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { ArrowRight, MessageCircle } from "lucide-react";
+import { ArrowRight, MessageCircle, Heart } from "lucide-react";
 import { fabrics, fabricTypes, brands } from "@/data/fabrics";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/useAuth";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import FloatingChat from "@/components/FloatingChat";
+import FloatingSocial from "@/components/FloatingSocial";
+import { useToast } from "@/hooks/use-toast";
 import mascotFabric from "@/assets/mascot-fabric.png";
 
 const FabricDetail = () => {
   const { id } = useParams();
   const fabric = fabrics.find((f) => f.id === id);
   const [selectedColor, setSelectedColor] = useState(0);
+  const { user } = useAuth();
+  const { toast } = useToast();
+  const [isFav, setIsFav] = useState(false);
+  const [favLoading, setFavLoading] = useState(false);
+
+  useEffect(() => {
+    if (user && id) {
+      supabase.from("favorites").select("id").eq("user_id", user.id).eq("fabric_id", id).then(({ data }) => {
+        setIsFav(!!(data && data.length > 0));
+      });
+    }
+  }, [user, id]);
+
+  const toggleFavorite = async () => {
+    if (!user) {
+      toast({ title: "سجّل دخولك أولاً", description: "لإضافة الأقمشة للمفضلة", variant: "destructive" });
+      return;
+    }
+    setFavLoading(true);
+    if (isFav) {
+      await supabase.from("favorites").delete().eq("user_id", user.id).eq("fabric_id", id!);
+      setIsFav(false);
+      toast({ title: "تمت الإزالة من المفضلة" });
+    } else {
+      await supabase.from("favorites").insert({ user_id: user.id, fabric_id: id! });
+      setIsFav(true);
+      toast({ title: "تمت الإضافة للمفضلة ❤️" });
+    }
+    setFavLoading(false);
+  };
 
   if (!fabric) {
     return (
@@ -112,7 +145,7 @@ const FabricDetail = () => {
               <div className="grid grid-cols-2 gap-y-3 text-sm font-body">
                 <SpecRow label="النوع" value={typeName} />
                 <SpecRow label="الماركة" value={brandName} />
-                <SpecRow label="التصنيف" value={fabric.category === "upholstery" ? "قماش تنجيد" : "مقاس ستائر"} />
+                <SpecRow label="التصنيف" value={fabric.category === "upholstery" ? "قماش تنجيد" : "قماش ستائر"} />
                 <SpecRow label="المنشأ" value={fabric.origin} />
                 <SpecRow label="التركيب" value={fabric.composition} />
                 <SpecRow label="GSM" value={String(fabric.gsm)} />
@@ -154,6 +187,18 @@ const FabricDetail = () => {
                 <MessageCircle size={18} />
                 اطلب السعر عبر واتساب
               </a>
+              <button
+                onClick={toggleFavorite}
+                disabled={favLoading}
+                className={`px-4 py-3 rounded-lg border font-body text-sm font-semibold transition-colors flex items-center gap-2 ${
+                  isFav
+                    ? "bg-destructive/10 border-destructive text-destructive"
+                    : "bg-card border-border text-muted-foreground hover:border-primary hover:text-primary"
+                }`}
+              >
+                <Heart size={18} fill={isFav ? "currentColor" : "none"} />
+                {isFav ? "في المفضلة" : "أضف للمفضلة"}
+              </button>
             </div>
 
             {/* Mascot tip */}
@@ -168,7 +213,7 @@ const FabricDetail = () => {
       </div>
 
       <Footer />
-      <FloatingChat />
+      <FloatingSocial />
     </div>
   );
 };

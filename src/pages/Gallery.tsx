@@ -125,7 +125,7 @@ const Gallery = () => {
       </div>
 
       <Footer />
-      <FloatingChat />
+      <FloatingSocial />
     </div>
   );
 };
