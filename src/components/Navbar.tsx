@@ -11,7 +11,7 @@ const navItems = [
   { label: "المعرض", path: "/gallery" },
   { label: "أقمشة ستائر", path: "/gallery?category=local" },
   { label: "أقمشة تنجيد", path: "/gallery?category=imported" },
-  { label: "تواصل معنا", path: "/contact" },
+  { label: "تواصل معنا", path: "https://wa.me/201016694946", external: true },
 ];
 
 const isActivePath = (pathname: string, path: string) => pathname === path;

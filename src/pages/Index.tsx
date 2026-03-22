@@ -31,7 +31,10 @@ const Index = () => {
   const newArrivals = fabrics.filter((f) => f.isNew);
   const popular = fabrics.filter((f) => f.isPopular);
 
-  const handleIntroComplete = useCallback(() => setShowIntro(false), []);
+  const handleIntroComplete = useCallback(() => {
+    sessionStorage.setItem("intro_shown", "1");
+    setShowIntro(false);
+  }, []);
 
   if (showIntro) {
     return <IntroLoader onComplete={handleIntroComplete} />;
