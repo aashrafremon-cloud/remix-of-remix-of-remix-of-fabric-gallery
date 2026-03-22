@@ -692,6 +692,8 @@ const platformMeta: Record<string, { name: string; color: string }> = {
 const SocialLinksTab = ({ links, onRefresh }: { links: any[]; onRefresh: () => void }) => {
   const [editedLinks, setEditedLinks] = useState<any[]>(links);
   const [saving, setSaving] = useState(false);
+  const [newPlatform, setNewPlatform] = useState("");
+  const [newUrl, setNewUrl] = useState("");
   const { toast } = useToast();
 
   useEffect(() => { setEditedLinks(links); }, [links]);
@@ -710,14 +712,69 @@ const SocialLinksTab = ({ links, onRefresh }: { links: any[]; onRefresh: () => v
     onRefresh();
   };
 
+  const handleAdd = async () => {
+    if (!newPlatform.trim() || !newUrl.trim()) {
+      toast({ title: "خطأ", description: "يرجى اختيار المنصة وإدخال الرابط", variant: "destructive" });
+      return;
+    }
+    const { error } = await supabase.from("social_links").insert({ platform: newPlatform, url: newUrl.trim(), is_active: true });
+    if (error) {
+      toast({ title: "خطأ", description: "فشل في إضافة الرابط", variant: "destructive" });
+    } else {
+      setNewPlatform("");
+      setNewUrl("");
+      toast({ title: "تم الإضافة" });
+      onRefresh();
+    }
+  };
+
+  const handleDelete = async (id: string) => {
+    await supabase.from("social_links").delete().eq("id", id);
+    toast({ title: "تم الحذف" });
+    onRefresh();
+  };
+
+  const availablePlatforms = Object.keys(platformMeta).filter(
+    p => !editedLinks.some(l => l.platform === p)
+  );
+
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <h2 className="font-display text-xl text-foreground">إدارة روابط التواصل الاجتماعي</h2>
-        <Button onClick={handleSave} disabled={saving} className="gradient-teal text-primary-foreground gap-2 font-body">
-          <Save size={16} /> {saving ? "جاري الحفظ..." : "حفظ التغييرات"}
-        </Button>
+        {editedLinks.length > 0 && (
+          <Button onClick={handleSave} disabled={saving} className="gradient-teal text-primary-foreground gap-2 font-body">
+            <Save size={16} /> {saving ? "جاري الحفظ..." : "حفظ التغييرات"}
+          </Button>
+        )}
       </div>
+
+      {availablePlatforms.length > 0 && (
+        <div className="bg-card rounded-xl p-4 shadow-fabric space-y-3">
+          <h3 className="font-body font-semibold text-foreground text-sm">إضافة منصة جديدة</h3>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3 items-end">
+            <div>
+              <Label className="font-body text-sm">المنصة</Label>
+              <Select value={newPlatform} onValueChange={setNewPlatform}>
+                <SelectTrigger><SelectValue placeholder="اختر المنصة" /></SelectTrigger>
+                <SelectContent>
+                  {availablePlatforms.map(p => (
+                    <SelectItem key={p} value={p}>{platformMeta[p].name}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <Label className="font-body text-sm">الرابط</Label>
+              <Input value={newUrl} onChange={e => setNewUrl(e.target.value)} placeholder="https://..." dir="ltr" className="font-body text-sm" />
+            </div>
+            <Button onClick={handleAdd} className="gradient-teal text-primary-foreground gap-2 font-body">
+              <Plus size={16} /> إضافة
+            </Button>
+          </div>
+        </div>
+      )}
+
       <div className="space-y-3">
         {editedLinks.map((link) => {
           const meta = platformMeta[link.platform] || { name: link.platform, color: "#666" };
@@ -734,14 +791,19 @@ const SocialLinksTab = ({ links, onRefresh }: { links: any[]; onRefresh: () => v
               <div className="flex-1 space-y-2">
                 <div className="flex items-center justify-between">
                   <span className="font-body font-semibold text-foreground">{meta.name}</span>
-                  <Button
-                    size="sm"
-                    variant={link.is_active ? "default" : "outline"}
-                    onClick={() => updateField(link.id, "is_active", !link.is_active)}
-                    className={`font-body text-xs ${link.is_active ? "bg-emerald-600 hover:bg-emerald-700 text-white" : "text-destructive border-destructive/30"}`}
-                  >
-                    {link.is_active ? "مفعّل" : "معطّل"}
-                  </Button>
+                  <div className="flex gap-2">
+                    <Button
+                      size="sm"
+                      variant={link.is_active ? "default" : "outline"}
+                      onClick={() => updateField(link.id, "is_active", !link.is_active)}
+                      className={`font-body text-xs ${link.is_active ? "bg-emerald-600 hover:bg-emerald-700 text-white" : "text-destructive border-destructive/30"}`}
+                    >
+                      {link.is_active ? "مفعّل" : "معطّل"}
+                    </Button>
+                    <Button variant="ghost" size="sm" onClick={() => handleDelete(link.id)} className="text-destructive">
+                      <Trash2 size={14} />
+                    </Button>
+                  </div>
                 </div>
                 <Input
                   value={link.url}
@@ -754,6 +816,9 @@ const SocialLinksTab = ({ links, onRefresh }: { links: any[]; onRefresh: () => v
             </motion.div>
           );
         })}
+        {editedLinks.length === 0 && (
+          <div className="text-center py-12 text-muted-foreground font-body">لا توجد روابط بعد، أضف منصة جديدة من الأعلى</div>
+        )}
       </div>
     </div>
   );
