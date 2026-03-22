@@ -28,6 +28,7 @@ const AdminDashboard = () => {
   const [brands, setBrands] = useState<any[]>([]);
   const [fabrics, setFabrics] = useState<any[]>([]);
   const [chatUsers, setChatUsers] = useState<any[]>([]);
+  const [socialLinks, setSocialLinks] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const { toast } = useToast();
