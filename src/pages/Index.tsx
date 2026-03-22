@@ -3,6 +3,8 @@ import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import heroBanner from "@/assets/hero-banner.jpg";
 import logo from "@/assets/adam-logo.svg";
+import { useAuth } from "@/hooks/useAuth";
+import AuthGate from "@/components/AuthGate";
 import mascotThinking from "@/assets/mascot-thinking.png";
 import mascotFabric from "@/assets/mascot-fabric.png";
 import categoryUpholstery from "@/assets/category-upholstery.jpg";
