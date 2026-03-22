@@ -24,6 +24,7 @@ const categoryCards = [
 ];
 
 const Index = () => {
+  const { user, loading } = useAuth();
   const [showIntro, setShowIntro] = useState(() => {
     if (sessionStorage.getItem("intro_shown")) return false;
     return true;
@@ -40,6 +41,11 @@ const Index = () => {
 
   if (showIntro) {
     return <IntroLoader onComplete={handleIntroComplete} />;
+  }
+
+  if (!loading && !user) {
+    return <AuthGate />;
+  }
   }
 
   return (
