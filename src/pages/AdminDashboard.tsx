@@ -315,11 +315,19 @@ const FabricsTab = ({ fabrics, brands, onRefresh }: { fabrics: any[]; brands: an
               <ImageUploader bucket="product-images" onUploaded={(url) => setForm({...form, image_url: url})} currentUrl={form.image_url || undefined} />
             </div>
           </div>
-          <div className="flex flex-wrap gap-6">
-            <label className="flex items-center gap-2 font-body text-sm"><Switch checked={form.is_featured} onCheckedChange={v => setForm({...form, is_featured: v})} /> مميز</label>
-            <label className="flex items-center gap-2 font-body text-sm"><Switch checked={form.is_new} onCheckedChange={v => setForm({...form, is_new: v})} /> جديد</label>
-            <label className="flex items-center gap-2 font-body text-sm"><Switch checked={form.is_popular} onCheckedChange={v => setForm({...form, is_popular: v})} /> شائع</label>
-            <label className="flex items-center gap-2 font-body text-sm"><Switch checked={form.coming_soon} onCheckedChange={v => setForm({...form, coming_soon: v})} /> قريباً</label>
+          <div className="flex flex-wrap gap-3">
+            <Button type="button" size="sm" variant={form.is_featured ? "default" : "outline"} onClick={() => setForm({...form, is_featured: !form.is_featured})} className={`font-body text-sm ${form.is_featured ? "bg-emerald-600 hover:bg-emerald-700 text-white" : ""}`}>
+              {form.is_featured ? "✓ مميز" : "مميز"}
+            </Button>
+            <Button type="button" size="sm" variant={form.is_new ? "default" : "outline"} onClick={() => setForm({...form, is_new: !form.is_new})} className={`font-body text-sm ${form.is_new ? "bg-emerald-600 hover:bg-emerald-700 text-white" : ""}`}>
+              {form.is_new ? "✓ جديد" : "جديد"}
+            </Button>
+            <Button type="button" size="sm" variant={form.is_popular ? "default" : "outline"} onClick={() => setForm({...form, is_popular: !form.is_popular})} className={`font-body text-sm ${form.is_popular ? "bg-emerald-600 hover:bg-emerald-700 text-white" : ""}`}>
+              {form.is_popular ? "✓ شائع" : "شائع"}
+            </Button>
+            <Button type="button" size="sm" variant={form.coming_soon ? "default" : "outline"} onClick={() => setForm({...form, coming_soon: !form.coming_soon})} className={`font-body text-sm ${form.coming_soon ? "bg-emerald-600 hover:bg-emerald-700 text-white" : ""}`}>
+              {form.coming_soon ? "✓ قريباً" : "قريباً"}
+            </Button>
           </div>
           <div className="flex gap-2">
             <Button onClick={handleAdd} className="gradient-teal text-primary-foreground font-body">حفظ</Button>
