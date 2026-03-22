@@ -42,17 +42,29 @@ const Navbar = () => {
           </div>
 
           <div className="hidden items-center gap-8 font-body text-sm md:flex">
-            {navItems.map((item) => (
-              <Link
-                key={item.path}
-                to={item.path}
-                className={`transition-colors duration-200 hover:text-primary ${
-                  isActivePath(location.pathname, item.path) ? "text-primary font-semibold" : "text-muted-foreground"
-                }`}
-              >
-                {item.label}
-              </Link>
-            ))}
+            {navItems.map((item) =>
+              item.external ? (
+                <a
+                  key={item.path}
+                  href={item.path}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-muted-foreground transition-colors duration-200 hover:text-primary"
+                >
+                  {item.label}
+                </a>
+              ) : (
+                <Link
+                  key={item.path}
+                  to={item.path}
+                  className={`transition-colors duration-200 hover:text-primary ${
+                    isActivePath(location.pathname, item.path) ? "text-primary font-semibold" : "text-muted-foreground"
+                  }`}
+                >
+                  {item.label}
+                </Link>
+              )
+            )}
           </div>
 
           <Link to="/" className="flex items-center">
