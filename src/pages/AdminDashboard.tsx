@@ -82,6 +82,7 @@ const AdminDashboard = () => {
     { id: "brands", label: "الماركات", icon: Tag, count: brands.length },
     { id: "messages", label: "الرسائل", icon: MessageSquare, count: messages.filter(m => !m.is_read).length },
     { id: "chats", label: "المحادثات", icon: MessageSquare, count: chatUsers.length },
+    { id: "social", label: "التواصل الاجتماعي", icon: Share2 },
   ];
 
   return (
