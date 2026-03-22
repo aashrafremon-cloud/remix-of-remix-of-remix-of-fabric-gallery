@@ -86,18 +86,31 @@ const Navbar = () => {
             className="overflow-hidden border-b border-border bg-background md:hidden"
           >
             <div className="container mx-auto flex flex-col gap-4 px-4 py-4">
-              {navItems.map((item) => (
-                <Link
-                  key={item.path}
-                  to={item.path}
-                  onClick={() => setIsOpen(false)}
-                  className={`py-2 text-sm ${
-                    isActivePath(location.pathname, item.path) ? "text-primary font-semibold" : "text-muted-foreground"
-                  }`}
-                >
-                  {item.label}
-                </Link>
-              ))}
+              {navItems.map((item) =>
+                item.external ? (
+                  <a
+                    key={item.path}
+                    href={item.path}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={() => setIsOpen(false)}
+                    className="py-2 text-sm text-muted-foreground"
+                  >
+                    {item.label}
+                  </a>
+                ) : (
+                  <Link
+                    key={item.path}
+                    to={item.path}
+                    onClick={() => setIsOpen(false)}
+                    className={`py-2 text-sm ${
+                      isActivePath(location.pathname, item.path) ? "text-primary font-semibold" : "text-muted-foreground"
+                    }`}
+                  >
+                    {item.label}
+                  </Link>
+                )
+              )}
               {user ? (
                 <Link to="/profile" onClick={() => setIsOpen(false)} className="py-2 text-sm text-primary font-semibold">
                   حسابي
