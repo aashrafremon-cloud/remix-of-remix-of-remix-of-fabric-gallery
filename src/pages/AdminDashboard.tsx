@@ -666,4 +666,78 @@ const AdminChatsTab = ({ chatUsers }: { chatUsers: any[] }) => {
   );
 };
 
+// Social Links Tab
+const platformMeta: Record<string, { name: string; color: string }> = {
+  whatsapp: { name: "WhatsApp", color: "#25D366" },
+  facebook: { name: "Facebook", color: "#1877F2" },
+  instagram: { name: "Instagram", color: "#E4405F" },
+  tiktok: { name: "TikTok", color: "#000000" },
+};
+
+const SocialLinksTab = ({ links, onRefresh }: { links: any[]; onRefresh: () => void }) => {
+  const [editedLinks, setEditedLinks] = useState<any[]>(links);
+  const [saving, setSaving] = useState(false);
+  const { toast } = useToast();
+
+  useEffect(() => { setEditedLinks(links); }, [links]);
+
+  const updateField = (id: string, field: string, value: any) => {
+    setEditedLinks(prev => prev.map(l => l.id === id ? { ...l, [field]: value } : l));
+  };
+
+  const handleSave = async () => {
+    setSaving(true);
+    for (const link of editedLinks) {
+      await supabase.from("social_links").update({ url: link.url, is_active: link.is_active }).eq("id", link.id);
+    }
+    toast({ title: "تم الحفظ", description: "تم تحديث روابط التواصل الاجتماعي" });
+    setSaving(false);
+    onRefresh();
+  };
+
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center justify-between">
+        <h2 className="font-display text-xl text-foreground">إدارة روابط التواصل الاجتماعي</h2>
+        <Button onClick={handleSave} disabled={saving} className="gradient-teal text-primary-foreground gap-2 font-body">
+          <Save size={16} /> {saving ? "جاري الحفظ..." : "حفظ التغييرات"}
+        </Button>
+      </div>
+      <div className="space-y-3">
+        {editedLinks.map((link) => {
+          const meta = platformMeta[link.platform] || { name: link.platform, color: "#666" };
+          return (
+            <motion.div
+              key={link.id}
+              className="bg-card rounded-xl p-4 shadow-fabric flex items-center gap-4"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+            >
+              <div className="w-10 h-10 rounded-full flex items-center justify-center text-white flex-shrink-0" style={{ backgroundColor: meta.color }}>
+                <Share2 size={18} />
+              </div>
+              <div className="flex-1 space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="font-body font-semibold text-foreground">{meta.name}</span>
+                  <div className="flex items-center gap-2">
+                    <span className="font-body text-xs text-muted-foreground">{link.is_active ? "مفعّل" : "معطّل"}</span>
+                    <Switch checked={link.is_active} onCheckedChange={(v) => updateField(link.id, "is_active", v)} />
+                  </div>
+                </div>
+                <Input
+                  value={link.url}
+                  onChange={(e) => updateField(link.id, "url", e.target.value)}
+                  dir="ltr"
+                  placeholder={`رابط ${meta.name}`}
+                  className="font-body text-sm"
+                />
+              </div>
+            </motion.div>
+          );
+        })}
+      </div>
+    </div>
+  );
+};
+
 export default AdminDashboard;
