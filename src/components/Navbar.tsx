@@ -9,8 +9,6 @@ const navItems: { label: string; path: string; external?: boolean }[] = [
   { label: "الرئيسية", path: "/" },
   { label: "عن آدم", path: "/about" },
   { label: "المعرض", path: "/gallery" },
-  { label: "أقمشة ستائر", path: "/gallery?category=local" },
-  { label: "أقمشة تنجيد", path: "/gallery?category=imported" },
   { label: "تواصل معنا", path: "https://wa.me/201016694946", external: true },
 ];
 

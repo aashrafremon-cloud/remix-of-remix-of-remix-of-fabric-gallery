@@ -1,7 +1,26 @@
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import logo from "@/assets/adam-logo.svg";
+import { supabase } from "@/integrations/supabase/client";
+
+const platformNames: Record<string, string> = {
+  whatsapp: "واتساب",
+  facebook: "فيسبوك",
+  instagram: "انستجرام",
+  tiktok: "تيك توك",
+};
 
 const Footer = () => {
+  const [socialLinks, setSocialLinks] = useState<any[]>([]);
+
+  useEffect(() => {
+    supabase.from("social_links").select("*").eq("is_active", true).then(({ data }) => {
+      if (data) setSocialLinks(data);
+    });
+  }, []);
+
+  const whatsappLink = socialLinks.find((l) => l.platform === "whatsapp");
+
   return (
     <footer className="mt-16 bg-foreground py-12 text-primary-foreground">
       <div className="container mx-auto px-4">
@@ -24,14 +43,27 @@ const Footer = () => {
           <div>
             <h4 className="mb-4 font-display text-lg text-gold">تواصل معنا</h4>
             <div className="flex flex-col gap-2 font-body text-sm opacity-70">
-              <span>📞 +966 50 000 0000</span>
-              <span>✉️ info@adamfabrics.com</span>
-              <span>📍 الرياض، المملكة العربية السعودية</span>
+              {whatsappLink && (
+                <a href={whatsappLink.url} target="_blank" rel="noopener noreferrer" className="transition-opacity hover:opacity-100">
+                  📞 واتساب
+                </a>
+              )}
+              {socialLinks.filter(l => l.platform !== "whatsapp").map((link) => (
+                <a key={link.id} href={link.url} target="_blank" rel="noopener noreferrer" className="transition-opacity hover:opacity-100">
+                  {platformNames[link.platform] || link.platform}
+                </a>
+              ))}
+              {socialLinks.length === 0 && (
+                <>
+                  <a href="https://wa.me/201016694946" target="_blank" rel="noopener noreferrer" className="transition-opacity hover:opacity-100">📞 واتساب</a>
+                  <span>✉️ info@adamfabrics.com</span>
+                </>
+              )}
             </div>
           </div>
         </div>
         <div className="mt-8 border-t border-primary-foreground/20 pt-6 text-center font-body text-xs opacity-50">
-          © 2024 ADAM Fabrics. جميع الحقوق محفوظة
+          © {new Date().getFullYear()} ADAM Fabrics. جميع الحقوق محفوظة
         </div>
       </div>
     </footer>
