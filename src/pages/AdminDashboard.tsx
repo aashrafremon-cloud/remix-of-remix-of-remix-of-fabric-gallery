@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
   Users, Package, MessageSquare, Tag, LogOut, BarChart3, Plus, Trash2, Eye, EyeOff,
-  Star, Sparkles, Upload, Image as ImageIcon
+  Star, Sparkles, Upload, Image as ImageIcon, Share2, Save
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
