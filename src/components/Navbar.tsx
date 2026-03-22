@@ -5,13 +5,13 @@ import { Menu, X, Search, User, LogIn } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import logo from "@/assets/adam-logo.svg";
 
-const navItems = [
+const navItems: { label: string; path: string; external?: boolean }[] = [
   { label: "الرئيسية", path: "/" },
   { label: "عن آدم", path: "/about" },
   { label: "المعرض", path: "/gallery" },
   { label: "أقمشة ستائر", path: "/gallery?category=local" },
   { label: "أقمشة تنجيد", path: "/gallery?category=imported" },
-  { label: "تواصل معنا", path: "/contact" },
+  { label: "تواصل معنا", path: "https://wa.me/201016694946", external: true },
 ];
 
 const isActivePath = (pathname: string, path: string) => pathname === path;
@@ -42,17 +42,29 @@ const Navbar = () => {
           </div>
 
           <div className="hidden items-center gap-8 font-body text-sm md:flex">
-            {navItems.map((item) => (
-              <Link
-                key={item.path}
-                to={item.path}
-                className={`transition-colors duration-200 hover:text-primary ${
-                  isActivePath(location.pathname, item.path) ? "text-primary font-semibold" : "text-muted-foreground"
-                }`}
-              >
-                {item.label}
-              </Link>
-            ))}
+            {navItems.map((item) =>
+              item.external ? (
+                <a
+                  key={item.path}
+                  href={item.path}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-muted-foreground transition-colors duration-200 hover:text-primary"
+                >
+                  {item.label}
+                </a>
+              ) : (
+                <Link
+                  key={item.path}
+                  to={item.path}
+                  className={`transition-colors duration-200 hover:text-primary ${
+                    isActivePath(location.pathname, item.path) ? "text-primary font-semibold" : "text-muted-foreground"
+                  }`}
+                >
+                  {item.label}
+                </Link>
+              )
+            )}
           </div>
 
           <Link to="/" className="flex items-center">
@@ -74,18 +86,31 @@ const Navbar = () => {
             className="overflow-hidden border-b border-border bg-background md:hidden"
           >
             <div className="container mx-auto flex flex-col gap-4 px-4 py-4">
-              {navItems.map((item) => (
-                <Link
-                  key={item.path}
-                  to={item.path}
-                  onClick={() => setIsOpen(false)}
-                  className={`py-2 text-sm ${
-                    isActivePath(location.pathname, item.path) ? "text-primary font-semibold" : "text-muted-foreground"
-                  }`}
-                >
-                  {item.label}
-                </Link>
-              ))}
+              {navItems.map((item) =>
+                item.external ? (
+                  <a
+                    key={item.path}
+                    href={item.path}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={() => setIsOpen(false)}
+                    className="py-2 text-sm text-muted-foreground"
+                  >
+                    {item.label}
+                  </a>
+                ) : (
+                  <Link
+                    key={item.path}
+                    to={item.path}
+                    onClick={() => setIsOpen(false)}
+                    className={`py-2 text-sm ${
+                      isActivePath(location.pathname, item.path) ? "text-primary font-semibold" : "text-muted-foreground"
+                    }`}
+                  >
+                    {item.label}
+                  </Link>
+                )
+              )}
               {user ? (
                 <Link to="/profile" onClick={() => setIsOpen(false)} className="py-2 text-sm text-primary font-semibold">
                   حسابي

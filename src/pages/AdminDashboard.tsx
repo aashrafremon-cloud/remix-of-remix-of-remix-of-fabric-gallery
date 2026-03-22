@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Switch } from "@/components/ui/switch";
+
 import { useToast } from "@/hooks/use-toast";
 import logo from "@/assets/adam-logo.svg";
 
@@ -315,11 +315,19 @@ const FabricsTab = ({ fabrics, brands, onRefresh }: { fabrics: any[]; brands: an
               <ImageUploader bucket="product-images" onUploaded={(url) => setForm({...form, image_url: url})} currentUrl={form.image_url || undefined} />
             </div>
           </div>
-          <div className="flex flex-wrap gap-6">
-            <label className="flex items-center gap-2 font-body text-sm"><Switch checked={form.is_featured} onCheckedChange={v => setForm({...form, is_featured: v})} /> مميز</label>
-            <label className="flex items-center gap-2 font-body text-sm"><Switch checked={form.is_new} onCheckedChange={v => setForm({...form, is_new: v})} /> جديد</label>
-            <label className="flex items-center gap-2 font-body text-sm"><Switch checked={form.is_popular} onCheckedChange={v => setForm({...form, is_popular: v})} /> شائع</label>
-            <label className="flex items-center gap-2 font-body text-sm"><Switch checked={form.coming_soon} onCheckedChange={v => setForm({...form, coming_soon: v})} /> قريباً</label>
+          <div className="flex flex-wrap gap-3">
+            <Button type="button" size="sm" variant={form.is_featured ? "default" : "outline"} onClick={() => setForm({...form, is_featured: !form.is_featured})} className={`font-body text-sm ${form.is_featured ? "bg-emerald-600 hover:bg-emerald-700 text-white" : ""}`}>
+              {form.is_featured ? "✓ مميز" : "مميز"}
+            </Button>
+            <Button type="button" size="sm" variant={form.is_new ? "default" : "outline"} onClick={() => setForm({...form, is_new: !form.is_new})} className={`font-body text-sm ${form.is_new ? "bg-emerald-600 hover:bg-emerald-700 text-white" : ""}`}>
+              {form.is_new ? "✓ جديد" : "جديد"}
+            </Button>
+            <Button type="button" size="sm" variant={form.is_popular ? "default" : "outline"} onClick={() => setForm({...form, is_popular: !form.is_popular})} className={`font-body text-sm ${form.is_popular ? "bg-emerald-600 hover:bg-emerald-700 text-white" : ""}`}>
+              {form.is_popular ? "✓ شائع" : "شائع"}
+            </Button>
+            <Button type="button" size="sm" variant={form.coming_soon ? "default" : "outline"} onClick={() => setForm({...form, coming_soon: !form.coming_soon})} className={`font-body text-sm ${form.coming_soon ? "bg-emerald-600 hover:bg-emerald-700 text-white" : ""}`}>
+              {form.coming_soon ? "✓ قريباً" : "قريباً"}
+            </Button>
           </div>
           <div className="flex gap-2">
             <Button onClick={handleAdd} className="gradient-teal text-primary-foreground font-body">حفظ</Button>
@@ -719,10 +727,14 @@ const SocialLinksTab = ({ links, onRefresh }: { links: any[]; onRefresh: () => v
               <div className="flex-1 space-y-2">
                 <div className="flex items-center justify-between">
                   <span className="font-body font-semibold text-foreground">{meta.name}</span>
-                  <div className="flex items-center gap-2">
-                    <span className="font-body text-xs text-muted-foreground">{link.is_active ? "مفعّل" : "معطّل"}</span>
-                    <Switch checked={link.is_active} onCheckedChange={(v) => updateField(link.id, "is_active", v)} />
-                  </div>
+                  <Button
+                    size="sm"
+                    variant={link.is_active ? "default" : "outline"}
+                    onClick={() => updateField(link.id, "is_active", !link.is_active)}
+                    className={`font-body text-xs ${link.is_active ? "bg-emerald-600 hover:bg-emerald-700 text-white" : "text-destructive border-destructive/30"}`}
+                  >
+                    {link.is_active ? "مفعّل" : "معطّل"}
+                  </Button>
                 </div>
                 <Input
                   value={link.url}
