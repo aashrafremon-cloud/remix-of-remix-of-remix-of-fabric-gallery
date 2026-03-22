@@ -453,15 +453,17 @@ const CustomersTab = ({ customers, onRefresh }: { customers: any[]; onRefresh: (
 // Brands Tab
 const BrandsTab = ({ brands, onRefresh }: { brands: any[]; onRefresh: () => void }) => {
   const [newBrand, setNewBrand] = useState("");
+  const [newBrandImage, setNewBrandImage] = useState("");
   const { toast } = useToast();
 
   const handleAdd = async () => {
     if (!newBrand.trim()) return;
-    const { error } = await supabase.from("brands").insert({ name: newBrand.trim() });
+    const { error } = await supabase.from("brands").insert({ name: newBrand.trim(), image_url: newBrandImage || null });
     if (error) {
       toast({ title: "خطأ", description: "فشل في إضافة الماركة", variant: "destructive" });
     } else {
       setNewBrand("");
+      setNewBrandImage("");
       toast({ title: "تم إضافة الماركة" });
       onRefresh();
     }
@@ -476,31 +478,36 @@ const BrandsTab = ({ brands, onRefresh }: { brands: any[]; onRefresh: () => void
   return (
     <div className="space-y-4">
       <h2 className="font-display text-xl text-foreground">إدارة الماركات</h2>
-      <div className="flex gap-2">
-        <Input value={newBrand} onChange={e => setNewBrand(e.target.value)} placeholder="اسم الماركة الجديدة" className="font-body max-w-xs" />
+      <div className="bg-card rounded-xl p-4 shadow-fabric space-y-3">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <Label className="font-body text-sm">اسم الماركة *</Label>
+            <Input value={newBrand} onChange={e => setNewBrand(e.target.value)} placeholder="اسم الماركة الجديدة" className="font-body" />
+          </div>
+          <div>
+            <Label className="font-body text-sm">صورة الماركة</Label>
+            <ImageUploader bucket="product-images" onUploaded={(url) => setNewBrandImage(url)} currentUrl={newBrandImage || undefined} />
+          </div>
+        </div>
         <Button onClick={handleAdd} className="gradient-teal text-primary-foreground gap-2 font-body"><Plus size={16} /> إضافة</Button>
       </div>
-      <div className="bg-card rounded-xl shadow-fabric overflow-hidden">
-        <table className="w-full text-sm font-body">
-          <thead className="bg-muted">
-            <tr>
-              <th className="px-4 py-3 text-right">الاسم</th>
-              <th className="px-4 py-3 text-right">التاريخ</th>
-              <th className="px-4 py-3 text-center">إجراءات</th>
-            </tr>
-          </thead>
-          <tbody>
-            {brands.map((b: any) => (
-              <tr key={b.id} className="border-t border-border hover:bg-muted/50">
-                <td className="px-4 py-3 font-semibold">{b.name}</td>
-                <td className="px-4 py-3 text-muted-foreground">{new Date(b.created_at).toLocaleDateString("ar-EG")}</td>
-                <td className="px-4 py-3 text-center">
-                  <Button variant="ghost" size="sm" onClick={() => handleDelete(b.id)} className="text-destructive"><Trash2 size={14} /></Button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        {brands.map((b: any) => (
+          <motion.div key={b.id} className="bg-card rounded-xl shadow-fabric p-4 flex items-center gap-4" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+            {b.image_url ? (
+              <img src={b.image_url} alt={b.name} className="w-16 h-16 rounded-lg object-cover border border-border flex-shrink-0" />
+            ) : (
+              <div className="w-16 h-16 rounded-lg bg-muted flex items-center justify-center flex-shrink-0">
+                <ImageIcon size={20} className="text-muted-foreground" />
+              </div>
+            )}
+            <div className="flex-1 min-w-0">
+              <p className="font-body font-semibold text-foreground truncate">{b.name}</p>
+              <p className="font-body text-xs text-muted-foreground">{new Date(b.created_at).toLocaleDateString("ar-EG")}</p>
+            </div>
+            <Button variant="ghost" size="sm" onClick={() => handleDelete(b.id)} className="text-destructive flex-shrink-0"><Trash2 size={14} /></Button>
+          </motion.div>
+        ))}
       </div>
     </div>
   );

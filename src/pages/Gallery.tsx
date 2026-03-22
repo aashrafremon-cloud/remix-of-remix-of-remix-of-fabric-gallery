@@ -6,7 +6,9 @@ import SectionHeader from "@/components/SectionHeader";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import FloatingSocial from "@/components/FloatingSocial";
+import AuthGate from "@/components/AuthGate";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/useAuth";
 
 interface DbFabric {
   id: string;
@@ -38,6 +40,7 @@ const categoryTabs = [
 const Gallery = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const initialCategory = searchParams.get("category") || "";
+  const { user, loading: authLoading } = useAuth();
 
   const [fabrics, setFabrics] = useState<DbFabric[]>([]);
   const [loading, setLoading] = useState(true);
@@ -47,6 +50,7 @@ const Gallery = () => {
   const [showFilters, setShowFilters] = useState(false);
 
   useEffect(() => {
+    if (!user) return;
     const fetchFabrics = async () => {
       setLoading(true);
       const { data, error } = await supabase.from("fabrics_db").select("*");
@@ -54,7 +58,7 @@ const Gallery = () => {
       setLoading(false);
     };
     fetchFabrics();
-  }, []);
+  }, [user]);
 
   const handleCategoryChange = (cat: string) => {
     setSelectedCategory(cat);
@@ -87,6 +91,28 @@ const Gallery = () => {
   };
 
   const hasFilters = search || selectedCategory || selectedBrand;
+
+  // Show auth gate if not logged in
+  if (!authLoading && !user) {
+    return (
+      <div className="min-h-screen bg-background">
+        <Navbar />
+        <div className="container mx-auto px-4 py-10">
+          <SectionHeader title="معرض الأقمشة" subtitle="تصفح مجموعتنا الكاملة من أقمشة التنجيد والستائر" />
+          {/* Blurred preview behind */}
+          <div className="relative">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 blur-md pointer-events-none select-none opacity-50">
+              {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
+                <div key={i} className="rounded-lg bg-card shadow-fabric aspect-square animate-pulse" />
+              ))}
+            </div>
+            <AuthGate />
+          </div>
+        </div>
+        <Footer />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background">
@@ -226,6 +252,7 @@ const DbFabricCard = ({ fabric }: { fabric: DbFabric }) => {
               src={fabric.image_url}
               alt={fabric.name}
               className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+              loading="lazy"
             />
           ) : (
             <div className="w-full h-full bg-muted flex items-center justify-center">
