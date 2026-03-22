@@ -727,10 +727,14 @@ const SocialLinksTab = ({ links, onRefresh }: { links: any[]; onRefresh: () => v
               <div className="flex-1 space-y-2">
                 <div className="flex items-center justify-between">
                   <span className="font-body font-semibold text-foreground">{meta.name}</span>
-                  <div className="flex items-center gap-2">
-                    <span className="font-body text-xs text-muted-foreground">{link.is_active ? "مفعّل" : "معطّل"}</span>
-                    <Switch checked={link.is_active} onCheckedChange={(v) => updateField(link.id, "is_active", v)} />
-                  </div>
+                  <Button
+                    size="sm"
+                    variant={link.is_active ? "default" : "outline"}
+                    onClick={() => updateField(link.id, "is_active", !link.is_active)}
+                    className={`font-body text-xs ${link.is_active ? "bg-emerald-600 hover:bg-emerald-700 text-white" : "text-destructive border-destructive/30"}`}
+                  >
+                    {link.is_active ? "مفعّل" : "معطّل"}
+                  </Button>
                 </div>
                 <Input
                   value={link.url}
