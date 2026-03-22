@@ -5,7 +5,7 @@ import { Menu, X, Search, User, LogIn } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import logo from "@/assets/adam-logo.svg";
 
-const navItems = [
+const navItems: { label: string; path: string; external?: boolean }[] = [
   { label: "الرئيسية", path: "/" },
   { label: "عن آدم", path: "/about" },
   { label: "المعرض", path: "/gallery" },
