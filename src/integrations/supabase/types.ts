@@ -227,6 +227,30 @@ export type Database = {
         }
         Relationships: []
       }
+      social_links: {
+        Row: {
+          id: string
+          is_active: boolean
+          platform: string
+          updated_at: string
+          url: string
+        }
+        Insert: {
+          id?: string
+          is_active?: boolean
+          platform: string
+          updated_at?: string
+          url?: string
+        }
+        Update: {
+          id?: string
+          is_active?: boolean
+          platform?: string
+          updated_at?: string
+          url?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           id: string

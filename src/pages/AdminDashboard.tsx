@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
   Users, Package, MessageSquare, Tag, LogOut, BarChart3, Plus, Trash2, Eye, EyeOff,
-  Star, Sparkles, Upload, Image as ImageIcon
+  Star, Sparkles, Upload, Image as ImageIcon, Share2, Save
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -14,7 +14,7 @@ import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
 import logo from "@/assets/adam-logo.svg";
 
-type Tab = "stats" | "fabrics" | "customers" | "brands" | "messages" | "chats";
+type Tab = "stats" | "fabrics" | "customers" | "brands" | "messages" | "chats" | "social";
 
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
 
@@ -28,6 +28,7 @@ const AdminDashboard = () => {
   const [brands, setBrands] = useState<any[]>([]);
   const [fabrics, setFabrics] = useState<any[]>([]);
   const [chatUsers, setChatUsers] = useState<any[]>([]);
+  const [socialLinks, setSocialLinks] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -46,16 +47,18 @@ const AdminDashboard = () => {
 
   const fetchAll = async () => {
     setLoading(true);
-    const [c, m, b, f] = await Promise.all([
+    const [c, m, b, f, s] = await Promise.all([
       supabase.from("customers").select("*").order("created_at", { ascending: false }),
       supabase.from("messages").select("*").order("created_at", { ascending: false }),
       supabase.from("brands").select("*").order("created_at", { ascending: false }),
       supabase.from("fabrics_db").select("*").order("created_at", { ascending: false }),
+      supabase.from("social_links").select("*").order("platform"),
     ]);
     setCustomers(c.data || []);
     setMessages(m.data || []);
     setBrands(b.data || []);
     setFabrics(f.data || []);
+    setSocialLinks(s.data || []);
 
     // Fetch unique chat users
     const { data: chatMsgs } = await supabase.from("chat_messages").select("user_id").order("created_at", { ascending: false });
@@ -79,6 +82,7 @@ const AdminDashboard = () => {
     { id: "brands", label: "الماركات", icon: Tag, count: brands.length },
     { id: "messages", label: "الرسائل", icon: MessageSquare, count: messages.filter(m => !m.is_read).length },
     { id: "chats", label: "المحادثات", icon: MessageSquare, count: chatUsers.length },
+    { id: "social", label: "التواصل الاجتماعي", icon: Share2 },
   ];
 
   return (
@@ -124,6 +128,7 @@ const AdminDashboard = () => {
             {tab === "brands" && <BrandsTab brands={brands} onRefresh={fetchAll} />}
             {tab === "messages" && <MessagesTab messages={messages} onRefresh={fetchAll} />}
             {tab === "chats" && <AdminChatsTab chatUsers={chatUsers} />}
+            {tab === "social" && <SocialLinksTab links={socialLinks} onRefresh={fetchAll} />}
           </>
         )}
       </div>
@@ -656,6 +661,80 @@ const AdminChatsTab = ({ chatUsers }: { chatUsers: any[] }) => {
             إرسال
           </Button>
         </div>
+      </div>
+    </div>
+  );
+};
+
+// Social Links Tab
+const platformMeta: Record<string, { name: string; color: string }> = {
+  whatsapp: { name: "WhatsApp", color: "#25D366" },
+  facebook: { name: "Facebook", color: "#1877F2" },
+  instagram: { name: "Instagram", color: "#E4405F" },
+  tiktok: { name: "TikTok", color: "#000000" },
+};
+
+const SocialLinksTab = ({ links, onRefresh }: { links: any[]; onRefresh: () => void }) => {
+  const [editedLinks, setEditedLinks] = useState<any[]>(links);
+  const [saving, setSaving] = useState(false);
+  const { toast } = useToast();
+
+  useEffect(() => { setEditedLinks(links); }, [links]);
+
+  const updateField = (id: string, field: string, value: any) => {
+    setEditedLinks(prev => prev.map(l => l.id === id ? { ...l, [field]: value } : l));
+  };
+
+  const handleSave = async () => {
+    setSaving(true);
+    for (const link of editedLinks) {
+      await supabase.from("social_links").update({ url: link.url, is_active: link.is_active }).eq("id", link.id);
+    }
+    toast({ title: "تم الحفظ", description: "تم تحديث روابط التواصل الاجتماعي" });
+    setSaving(false);
+    onRefresh();
+  };
+
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center justify-between">
+        <h2 className="font-display text-xl text-foreground">إدارة روابط التواصل الاجتماعي</h2>
+        <Button onClick={handleSave} disabled={saving} className="gradient-teal text-primary-foreground gap-2 font-body">
+          <Save size={16} /> {saving ? "جاري الحفظ..." : "حفظ التغييرات"}
+        </Button>
+      </div>
+      <div className="space-y-3">
+        {editedLinks.map((link) => {
+          const meta = platformMeta[link.platform] || { name: link.platform, color: "#666" };
+          return (
+            <motion.div
+              key={link.id}
+              className="bg-card rounded-xl p-4 shadow-fabric flex items-center gap-4"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+            >
+              <div className="w-10 h-10 rounded-full flex items-center justify-center text-white flex-shrink-0" style={{ backgroundColor: meta.color }}>
+                <Share2 size={18} />
+              </div>
+              <div className="flex-1 space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="font-body font-semibold text-foreground">{meta.name}</span>
+                  <div className="flex items-center gap-2">
+                    <span className="font-body text-xs text-muted-foreground">{link.is_active ? "مفعّل" : "معطّل"}</span>
+                    <Switch checked={link.is_active} onCheckedChange={(v) => updateField(link.id, "is_active", v)} />
+                  </div>
+                </div>
+                <Input
+                  value={link.url}
+                  onChange={(e) => updateField(link.id, "url", e.target.value)}
+                  dir="ltr"
+                  placeholder={`رابط ${meta.name}`}
+                  className="font-body text-sm"
+                />
+              </div>
+            </motion.div>
+          );
+        })}
       </div>
     </div>
   );
