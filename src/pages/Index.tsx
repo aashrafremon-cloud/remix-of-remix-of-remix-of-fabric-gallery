@@ -46,7 +46,6 @@ const Index = () => {
   if (!loading && !user) {
     return <AuthGate />;
   }
-  }
 
   return (
     <div className="min-h-screen bg-background">
