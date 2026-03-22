@@ -128,6 +128,7 @@ const AdminDashboard = () => {
             {tab === "brands" && <BrandsTab brands={brands} onRefresh={fetchAll} />}
             {tab === "messages" && <MessagesTab messages={messages} onRefresh={fetchAll} />}
             {tab === "chats" && <AdminChatsTab chatUsers={chatUsers} />}
+            {tab === "social" && <SocialLinksTab links={socialLinks} onRefresh={fetchAll} />}
           </>
         )}
       </div>
