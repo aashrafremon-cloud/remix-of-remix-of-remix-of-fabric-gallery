@@ -14,7 +14,7 @@ import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
 import logo from "@/assets/adam-logo.svg";
 
-type Tab = "stats" | "fabrics" | "customers" | "brands" | "messages" | "chats";
+type Tab = "stats" | "fabrics" | "customers" | "brands" | "messages" | "chats" | "social";
 
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
 
