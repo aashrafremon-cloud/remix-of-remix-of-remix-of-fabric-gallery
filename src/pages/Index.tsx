@@ -22,7 +22,10 @@ const categoryCards = [
 ];
 
 const Index = () => {
-  const [showIntro, setShowIntro] = useState(true);
+  const [showIntro, setShowIntro] = useState(() => {
+    if (sessionStorage.getItem("intro_shown")) return false;
+    return true;
+  });
 
   const featured = fabrics.filter((f) => f.isFeatured);
   const newArrivals = fabrics.filter((f) => f.isNew);
