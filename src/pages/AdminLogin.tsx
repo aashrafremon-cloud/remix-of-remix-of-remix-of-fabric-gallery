@@ -9,32 +9,46 @@ import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import logo from "@/assets/adam-logo.svg";
 
-const FIRST_ADMIN_EMAIL = "admin@adamfabrics.com";
-const FIRST_ADMIN_PASSWORD = "AdamAdmin#2026";
+const sanitize = (v: string) => v.replace(/[<>"'&]/g, "").trim();
 
 const AdminLogin = () => {
-  const [email, setEmail] = useState(FIRST_ADMIN_EMAIL);
-  const [password, setPassword] = useState(FIRST_ADMIN_PASSWORD);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [creatingAdmin, setCreatingAdmin] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
 
+  const clearForm = () => {
+    setEmail("");
+    setPassword("");
+  };
+
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+    const cleanEmail = sanitize(email);
+    if (!cleanEmail || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(cleanEmail)) {
+      toast({ title: "خطأ", description: "بريد إلكتروني غير صالح", variant: "destructive" });
+      return;
+    }
+    if (password.length < 6) {
+      toast({ title: "خطأ", description: "كلمة المرور قصيرة جداً", variant: "destructive" });
+      return;
+    }
+
     setLoading(true);
-
-    const { data, error } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
-
+    const { data, error } = await supabase.auth.signInWithPassword({ email: cleanEmail, password });
+    
     if (error) {
       setLoading(false);
+      clearForm();
       toast({ title: "خطأ في الدخول", description: "البريد الإلكتروني أو كلمة المرور غير صحيحة", variant: "destructive" });
       return;
     }
 
     const { data: roles } = await supabase.from("user_roles").select("role").eq("user_id", data.user.id).eq("role", "admin");
-
     setLoading(false);
+    clearForm();
 
     if (roles && roles.length > 0) {
       navigate("/admin");
@@ -46,12 +60,7 @@ const AdminLogin = () => {
 
   const handleBootstrapAdmin = async () => {
     setCreatingAdmin(true);
-    const { error } = await supabase.functions.invoke("bootstrap-first-admin", {
-      body: {
-        email: FIRST_ADMIN_EMAIL,
-        password: FIRST_ADMIN_PASSWORD,
-      },
-    });
+    const { error } = await supabase.functions.invoke("bootstrap-first-admin");
     setCreatingAdmin(false);
 
     if (error) {
@@ -59,9 +68,7 @@ const AdminLogin = () => {
       return;
     }
 
-    toast({ title: "تم إنشاء أول مشرف", description: "يمكنك الآن تسجيل الدخول بالبيانات الجاهزة" });
-    setEmail(FIRST_ADMIN_EMAIL);
-    setPassword(FIRST_ADMIN_PASSWORD);
+    toast({ title: "تم إنشاء أول مشرف", description: "أدخل بيانات الدخول الخاصة بالمشرف" });
   };
 
   return (
@@ -87,32 +94,34 @@ const AdminLogin = () => {
           </Button>
         </div>
 
-        <form onSubmit={handleLogin} className="space-y-5">
+        <form onSubmit={handleLogin} className="space-y-5" autoComplete="off">
           <div className="space-y-2">
-            <Label htmlFor="email" className="flex items-center gap-2 font-body text-sm">
+            <Label htmlFor="admin-email" className="flex items-center gap-2 font-body text-sm">
               <Mail size={16} /> البريد الإلكتروني
             </Label>
             <Input
-              id="email"
+              id="admin-email"
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="admin@example.com"
               dir="ltr"
+              autoComplete="username"
               required
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="password" className="flex items-center gap-2 font-body text-sm">
+            <Label htmlFor="admin-password" className="flex items-center gap-2 font-body text-sm">
               <Lock size={16} /> كلمة المرور
             </Label>
             <Input
-              id="password"
+              id="admin-password"
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="••••••••"
               dir="ltr"
+              autoComplete="current-password"
               required
             />
           </div>

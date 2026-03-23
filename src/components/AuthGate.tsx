@@ -12,6 +12,8 @@ interface AuthGateProps {
   onSuccess?: () => void;
 }
 
+const sanitize = (v: string) => v.replace(/[<>"'&]/g, "").trim();
+
 const AuthGate = ({ onSuccess }: AuthGateProps) => {
   const [mode, setMode] = useState<"login" | "signup">("login");
   const [email, setEmail] = useState("");
@@ -20,16 +22,33 @@ const AuthGate = ({ onSuccess }: AuthGateProps) => {
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
 
+  const clearForm = () => {
+    setEmail("");
+    setPassword("");
+    setFullName("");
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    const cleanEmail = sanitize(email);
+    if (!cleanEmail || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(cleanEmail)) {
+      toast({ title: "خطأ", description: "بريد إلكتروني غير صالح", variant: "destructive" });
+      return;
+    }
+    if (password.length < 6) {
+      toast({ title: "خطأ", description: "كلمة المرور قصيرة جداً", variant: "destructive" });
+      return;
+    }
+
     setLoading(true);
 
     if (mode === "login") {
       const { error } = await supabase.auth.signInWithPassword({
-        email: email.trim(),
+        email: cleanEmail,
         password,
       });
       setLoading(false);
+      clearForm();
       if (error) {
         toast({ title: "خطأ", description: "البريد الإلكتروني أو كلمة المرور غير صحيحة", variant: "destructive" });
         return;
@@ -37,12 +56,19 @@ const AuthGate = ({ onSuccess }: AuthGateProps) => {
       toast({ title: "أهلاً بك! 👋" });
       onSuccess?.();
     } else {
+      const cleanName = sanitize(fullName);
+      if (cleanName.length < 2) {
+        setLoading(false);
+        toast({ title: "خطأ", description: "يرجى إدخال اسم صحيح", variant: "destructive" });
+        return;
+      }
       const { error } = await supabase.auth.signUp({
-        email: email.trim(),
+        email: cleanEmail,
         password,
-        options: { data: { full_name: fullName.trim() } },
+        options: { data: { full_name: cleanName } },
       });
       setLoading(false);
+      clearForm();
       if (error) {
         toast({ title: "خطأ", description: error.message, variant: "destructive" });
         return;
@@ -68,24 +94,24 @@ const AuthGate = ({ onSuccess }: AuthGateProps) => {
           </p>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-4" autoComplete="off">
           {mode === "signup" && (
             <div className="space-y-1.5">
               <Label className="font-body text-sm">الاسم الكامل</Label>
-              <Input value={fullName} onChange={(e) => setFullName(e.target.value)} placeholder="اسمك" required />
+              <Input value={fullName} onChange={(e) => setFullName(e.target.value)} placeholder="اسمك" maxLength={100} autoComplete="name" required />
             </div>
           )}
           <div className="space-y-1.5">
             <Label className="flex items-center gap-2 font-body text-sm">
               <Mail size={14} /> البريد الإلكتروني
             </Label>
-            <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="email@example.com" dir="ltr" required />
+            <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="email@example.com" dir="ltr" autoComplete="email" required />
           </div>
           <div className="space-y-1.5">
             <Label className="flex items-center gap-2 font-body text-sm">
               <Lock size={14} /> كلمة المرور
             </Label>
-            <Input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••" dir="ltr" required minLength={6} />
+            <Input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••" dir="ltr" minLength={6} autoComplete={mode === "login" ? "current-password" : "new-password"} required />
           </div>
           <Button type="submit" disabled={loading} className="gradient-teal w-full font-body font-semibold text-primary-foreground">
             {loading ? "جاري التحميل..." : mode === "login" ? (
@@ -98,7 +124,7 @@ const AuthGate = ({ onSuccess }: AuthGateProps) => {
 
         <p className="mt-5 text-center font-body text-sm text-muted-foreground">
           {mode === "login" ? "ليس لديك حساب؟ " : "لديك حساب بالفعل؟ "}
-          <button onClick={() => setMode(mode === "login" ? "signup" : "login")} className="text-primary hover:underline font-semibold">
+          <button onClick={() => { setMode(mode === "login" ? "signup" : "login"); clearForm(); }} className="text-primary hover:underline font-semibold">
             {mode === "login" ? "إنشاء حساب" : "تسجيل الدخول"}
           </button>
         </p>
