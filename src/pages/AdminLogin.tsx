@@ -58,18 +58,7 @@ const AdminLogin = () => {
     }
   };
 
-  const handleBootstrapAdmin = async () => {
-    setCreatingAdmin(true);
-    const { error } = await supabase.functions.invoke("bootstrap-first-admin");
-    setCreatingAdmin(false);
 
-    if (error) {
-      toast({ title: "تعذر إنشاء المشرف", description: "قد يكون تم إنشاء المشرف الأول بالفعل", variant: "destructive" });
-      return;
-    }
-
-    toast({ title: "تم إنشاء أول مشرف", description: "أدخل بيانات الدخول الخاصة بالمشرف" });
-  };
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
