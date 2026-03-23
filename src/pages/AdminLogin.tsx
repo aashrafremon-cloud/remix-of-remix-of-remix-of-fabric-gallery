@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import { Lock, Mail, ShieldPlus } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { SecureInput } from "@/components/ui/secure-input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import logo from "@/assets/adam-logo.svg";
@@ -99,7 +99,7 @@ const AdminLogin = () => {
             <Label htmlFor="admin-email" className="flex items-center gap-2 font-body text-sm">
               <Mail size={16} /> البريد الإلكتروني
             </Label>
-            <Input
+            <SecureInput
               id="admin-email"
               type="email"
               value={email}
@@ -114,7 +114,7 @@ const AdminLogin = () => {
             <Label htmlFor="admin-password" className="flex items-center gap-2 font-body text-sm">
               <Lock size={16} /> كلمة المرور
             </Label>
-            <Input
+            <SecureInput
               id="admin-password"
               type="password"
               value={password}

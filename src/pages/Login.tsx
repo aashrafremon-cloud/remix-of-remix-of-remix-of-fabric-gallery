@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import { Mail, Lock, LogIn } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { SecureInput } from "@/components/ui/secure-input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import logo from "@/assets/adam-logo.svg";
@@ -73,13 +73,13 @@ const Login = () => {
               <Label htmlFor="email" className="flex items-center gap-2 font-body text-sm">
                 <Mail size={16} /> البريد الإلكتروني
               </Label>
-              <Input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="email@example.com" dir="ltr" autoComplete="username" required />
+              <SecureInput id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="email@example.com" dir="ltr" autoComplete="username" required />
             </div>
             <div className="space-y-2">
               <Label htmlFor="password" className="flex items-center gap-2 font-body text-sm">
                 <Lock size={16} /> كلمة المرور
               </Label>
-              <Input id="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••" dir="ltr" autoComplete="current-password" required />
+              <SecureInput id="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••" dir="ltr" autoComplete="current-password" required />
             </div>
             <Button type="submit" disabled={loading} className="gradient-teal w-full font-body font-semibold text-primary-foreground">
               {loading ? "جاري الدخول..." : <><LogIn size={18} /> دخول</>}
