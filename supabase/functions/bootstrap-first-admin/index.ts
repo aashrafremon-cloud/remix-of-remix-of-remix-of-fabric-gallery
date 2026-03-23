@@ -2,11 +2,8 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.4";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-bootstrap-secret",
 };
-
-const ADMIN_EMAIL = "admin@adamfabrics.com";
-const ADMIN_PASSWORD = "AdamAdmin#2026";
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
@@ -21,10 +18,23 @@ Deno.serve(async (req) => {
   }
 
   try {
+    // Require a bootstrap secret to prevent unauthorized access
+    const bootstrapSecret = Deno.env.get("BOOTSTRAP_SECRET");
+    const providedSecret = req.headers.get("x-bootstrap-secret");
+
+    if (!bootstrapSecret || providedSecret !== bootstrapSecret) {
+      return new Response(JSON.stringify({ error: "Unauthorized" }), {
+        status: 401,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
     const supabaseUrl = Deno.env.get("SUPABASE_URL");
     const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+    const adminEmail = Deno.env.get("ADMIN_EMAIL");
+    const adminPassword = Deno.env.get("ADMIN_PASSWORD");
 
-    if (!supabaseUrl || !serviceRoleKey) {
+    if (!supabaseUrl || !serviceRoleKey || !adminEmail || !adminPassword) {
       throw new Error("Missing backend secrets");
     }
 
@@ -49,8 +59,8 @@ Deno.serve(async (req) => {
     }
 
     const { data: createdUser, error: createError } = await adminClient.auth.admin.createUser({
-      email: ADMIN_EMAIL,
-      password: ADMIN_PASSWORD,
+      email: adminEmail,
+      password: adminPassword,
       email_confirm: true,
     });
 
@@ -72,7 +82,7 @@ Deno.serve(async (req) => {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   } catch (error) {
-    return new Response(JSON.stringify({ error: error instanceof Error ? error.message : "Unexpected error" }), {
+    return new Response(JSON.stringify({ error: "Unexpected error" }), {
       status: 500,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
