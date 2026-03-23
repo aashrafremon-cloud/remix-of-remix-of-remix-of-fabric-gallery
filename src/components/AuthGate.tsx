@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import { Mail, Lock, LogIn, UserPlus } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { SecureInput } from "@/components/ui/secure-input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import logo from "@/assets/adam-logo.svg";
@@ -98,20 +98,20 @@ const AuthGate = ({ onSuccess }: AuthGateProps) => {
           {mode === "signup" && (
             <div className="space-y-1.5">
               <Label className="font-body text-sm">الاسم الكامل</Label>
-              <Input value={fullName} onChange={(e) => setFullName(e.target.value)} placeholder="اسمك" maxLength={100} autoComplete="name" required />
+                <SecureInput value={fullName} onChange={(e) => setFullName(e.target.value)} placeholder="اسمك" maxLength={100} autoComplete="name" required />
             </div>
           )}
           <div className="space-y-1.5">
             <Label className="flex items-center gap-2 font-body text-sm">
               <Mail size={14} /> البريد الإلكتروني
             </Label>
-            <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="email@example.com" dir="ltr" autoComplete="email" required />
+              <SecureInput type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="email@example.com" dir="ltr" autoComplete="email" required />
           </div>
           <div className="space-y-1.5">
             <Label className="flex items-center gap-2 font-body text-sm">
               <Lock size={14} /> كلمة المرور
             </Label>
-            <Input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••" dir="ltr" minLength={6} autoComplete={mode === "login" ? "current-password" : "new-password"} required />
+              <SecureInput type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••" dir="ltr" minLength={6} autoComplete={mode === "login" ? "current-password" : "new-password"} required />
           </div>
           <Button type="submit" disabled={loading} className="gradient-teal w-full font-body font-semibold text-primary-foreground">
             {loading ? "جاري التحميل..." : mode === "login" ? (

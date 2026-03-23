@@ -6,7 +6,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import FloatingSocial from "@/components/FloatingSocial";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { SecureInput } from "@/components/ui/secure-input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import mascotHappy from "@/assets/mascot-happy-transparent.png";
@@ -74,13 +74,13 @@ const Register = () => {
                 <Label htmlFor="name" className="flex items-center gap-2 font-body text-sm text-foreground">
                   <User size={16} /> الاسم الكامل
                 </Label>
-                <Input id="name" value={name} onChange={(e) => setName(e.target.value)} placeholder="أدخل اسمك الكامل" maxLength={100} className="text-right font-body" autoComplete="name" required />
+                <SecureInput id="name" value={name} onChange={(e) => setName(e.target.value)} placeholder="أدخل اسمك الكامل" maxLength={100} className="text-right font-body" autoComplete="name" required />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="phone" className="flex items-center gap-2 font-body text-sm text-foreground">
                   <Phone size={16} /> رقم الهاتف
                 </Label>
-                <Input id="phone" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="مثال: +966 50 000 0000" maxLength={20} className="text-right font-body" dir="ltr" autoComplete="tel" required />
+                <SecureInput id="phone" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="مثال: +966 50 000 0000" maxLength={20} className="text-right font-body" dir="ltr" autoComplete="tel" required />
               </div>
               <Button type="submit" disabled={loading} className="gradient-teal w-full py-3 font-body font-semibold text-primary-foreground">
                 {loading ? <span className="flex items-center gap-2">جاري التسجيل...</span> : <span className="flex items-center gap-2"><UserPlus size={18} /> تسجيل</span>}

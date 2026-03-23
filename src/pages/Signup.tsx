@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import { Mail, Lock, User, UserPlus } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { SecureInput } from "@/components/ui/secure-input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import logo from "@/assets/adam-logo.svg";
@@ -109,19 +109,19 @@ const Signup = () => {
               <Label htmlFor="name" className="flex items-center gap-2 font-body text-sm">
                 <User size={16} /> الاسم الكامل
               </Label>
-              <Input id="name" value={fullName} onChange={(e) => setFullName(e.target.value)} placeholder="أدخل اسمك" maxLength={100} className="font-body" autoComplete="name" required />
+              <SecureInput id="name" value={fullName} onChange={(e) => setFullName(e.target.value)} placeholder="أدخل اسمك" maxLength={100} className="font-body" autoComplete="name" required />
             </div>
             <div className="space-y-2">
               <Label htmlFor="email" className="flex items-center gap-2 font-body text-sm">
                 <Mail size={16} /> البريد الإلكتروني
               </Label>
-              <Input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="email@example.com" dir="ltr" autoComplete="email" required />
+              <SecureInput id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="email@example.com" dir="ltr" autoComplete="email" required />
             </div>
             <div className="space-y-2">
               <Label htmlFor="password" className="flex items-center gap-2 font-body text-sm">
                 <Lock size={16} /> كلمة المرور
               </Label>
-              <Input id="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="6 أحرف على الأقل" dir="ltr" minLength={6} autoComplete="new-password" required />
+              <SecureInput id="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="6 أحرف على الأقل" dir="ltr" minLength={6} autoComplete="new-password" required />
             </div>
             <Button type="submit" disabled={loading} className="gradient-teal w-full font-body font-semibold text-primary-foreground">
               {loading ? "جاري التسجيل..." : <><UserPlus size={18} /> إنشاء حساب</>}
