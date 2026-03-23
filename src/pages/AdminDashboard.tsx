@@ -169,7 +169,24 @@ const StatsTab = ({ customers, messages, fabrics, brands }: any) => {
 // Image Upload Component
 const ImageUploader = ({ bucket, onUploaded, currentUrl }: { bucket: string; onUploaded: (url: string) => void; currentUrl?: string }) => {
   const [uploading, setUploading] = useState(false);
-  const [preview, setPreview] = useState<string | null>(currentUrl || null);
+  const [preview, setPreview] = useState<string | null>(null);
+  const fileRef = useRef<HTMLInputElement>(null);
+
+  // Resolve signed URL for private buckets on mount
+  React.useEffect(() => {
+    if (!currentUrl) return;
+    if (bucket === 'customer-images') {
+      // Extract path from full URL or use as-is if it's just a path
+      const path = currentUrl.includes('/storage/') 
+        ? currentUrl.split('/').pop() || currentUrl 
+        : currentUrl;
+      supabase.storage.from(bucket).createSignedUrl(path, 3600).then(({ data }) => {
+        setPreview(data?.signedUrl || null);
+      });
+    } else {
+      setPreview(currentUrl);
+    }
+  }, [currentUrl, bucket]);
   const fileRef = useRef<HTMLInputElement>(null);
 
   const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
