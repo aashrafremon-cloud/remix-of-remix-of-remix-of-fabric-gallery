@@ -183,9 +183,17 @@ const ImageUploader = ({ bucket, onUploaded, currentUrl }: { bucket: string; onU
       setUploading(false);
       return;
     }
-    const url = getPublicUrl(bucket, path);
-    setPreview(url);
-    onUploaded(url);
+    // Use signed URL for private buckets, public URL for public ones
+    if (bucket === 'customer-images') {
+      const { data: signedData } = await supabase.storage.from(bucket).createSignedUrl(path, 3600);
+      const url = signedData?.signedUrl || '';
+      setPreview(url);
+      onUploaded(path); // Store the path, not the URL, for private buckets
+    } else {
+      const url = getPublicUrl(bucket, path);
+      setPreview(url);
+      onUploaded(url);
+    }
     setUploading(false);
   };
 
