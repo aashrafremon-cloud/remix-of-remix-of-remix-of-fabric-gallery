@@ -173,7 +173,7 @@ const ImageUploader = ({ bucket, onUploaded, currentUrl }: { bucket: string; onU
   const fileRef = useRef<HTMLInputElement>(null);
 
   // Resolve signed URL for private buckets on mount
-  React.useEffect(() => {
+  useEffect(() => {
     if (!currentUrl) return;
     if (bucket === 'customer-images') {
       // Extract path from full URL or use as-is if it's just a path
