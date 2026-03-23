@@ -73,15 +73,7 @@ const AdminLogin = () => {
           <p className="mt-1 font-body text-sm text-muted-foreground">تسجيل دخول المشرف</p>
         </div>
 
-        <div className="mb-5 rounded-xl border border-border bg-muted/60 p-4 text-right">
-          <p className="font-body text-xs leading-6 text-muted-foreground">
-            في حال عدم وجود مشرف بعد، اضغط الزر التالي لإنشاء أول مشرف تلقائياً.
-          </p>
-          <Button type="button" onClick={handleBootstrapAdmin} disabled={creatingAdmin} variant="outline" className="mt-3 w-full gap-2 font-body">
-            <ShieldPlus size={16} />
-            {creatingAdmin ? "جاري إنشاء المشرف الأول..." : "إنشاء أول مشرف"}
-          </Button>
-        </div>
+
 
         <form onSubmit={handleLogin} className="space-y-5" autoComplete="off">
           <div className="space-y-2">
