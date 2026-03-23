@@ -187,7 +187,7 @@ const ImageUploader = ({ bucket, onUploaded, currentUrl }: { bucket: string; onU
       setPreview(currentUrl);
     }
   }, [currentUrl, bucket]);
-  const fileRef = useRef<HTMLInputElement>(null);
+
 
   const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
