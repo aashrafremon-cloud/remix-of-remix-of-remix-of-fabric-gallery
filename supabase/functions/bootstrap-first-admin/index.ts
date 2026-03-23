@@ -5,6 +5,9 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
+const ADMIN_EMAIL = "admin@adamfabrics.com";
+const ADMIN_PASSWORD = "AdamAdmin#2026";
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -45,21 +48,9 @@ Deno.serve(async (req) => {
       });
     }
 
-    const { email, password } = await req.json();
-
-    const normalizedEmail = String(email ?? "").trim().toLowerCase();
-    const normalizedPassword = String(password ?? "");
-
-    if (!normalizedEmail || !normalizedPassword || normalizedPassword.length < 8) {
-      return new Response(JSON.stringify({ error: "Valid email and password are required" }), {
-        status: 400,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    }
-
     const { data: createdUser, error: createError } = await adminClient.auth.admin.createUser({
-      email: normalizedEmail,
-      password: normalizedPassword,
+      email: ADMIN_EMAIL,
+      password: ADMIN_PASSWORD,
       email_confirm: true,
     });
 
@@ -76,7 +67,7 @@ Deno.serve(async (req) => {
       throw roleError;
     }
 
-    return new Response(JSON.stringify({ email: normalizedEmail, userId: createdUser.user.id }), {
+    return new Response(JSON.stringify({ success: true }), {
       status: 200,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
